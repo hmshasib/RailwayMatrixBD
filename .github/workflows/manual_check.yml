@@ -1,0 +1,29 @@
+name: Manual Seat Scan
+on:
+  workflow_dispatch: # This creates the "Run workflow" button
+    inputs:
+      train_no:
+        description: 'Train Number'
+        required: true
+        default: '785'
+      doj:
+        description: 'Date (DD-Month-YYYY)'
+        required: true
+        default: '04-April-2026'
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip install requests
+      - name: Run Script
+        env:
+          TOKEN: ${{ secrets.RAIL_TOKEN }}
+          SSDK: ${{ secrets.RAIL_SSDK }}
+          UUDID: ${{ secrets.RAIL_UUDID }}
+        run: python matrix_script.py "${{ github.event.inputs.train_no }}" "${{ github.event.inputs.doj }}"
